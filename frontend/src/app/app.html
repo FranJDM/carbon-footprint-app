@@ -1,0 +1,183 @@
+<!-- src/app/app.html -->
+<div class="layout">
+  <!-- Panel lateral -->
+  <aside class="sidebar">
+    <nav>
+      <div class="menu-section">
+        <p class="menu-companies">Empresas</p>
+        <button class="nav-btn" (click)="viewCompanies()">👁️ Ver Empresas</button>
+  <button class="nav-btn" (click)="showAddCompanyForm()">➕ Añadir Empresa</button>
+
+      </div>
+
+      <div class="menu-section">
+        <p class="menu-emissions">Emisiones</p>
+        <button class="nav-btn" (click)="viewAllEmissions()">📊 Ver Todas las Emisiones</button>
+  <button class="nav-btn"(click)="showAddEmissionForm()">➕ Añadir Emisión</button>
+
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Área principal -->
+  <main class="main-content">
+    <header class="main-header">
+      <div class="header-content">
+        <div class="logo-animation">
+          <span class="leaf">🌿</span>
+          <span class="main-globe">🌍</span>
+          <span class="leaf">🍃</span>
+        </div>
+        <h1 class="header-title">Track your Carbon FootPrint</h1>
+        <div class="header-subtitle">
+          <span class="subtitle-item">Sostenibilidad</span>
+          <span class="divider">•</span>
+          <span class="subtitle-item">Medición</span>
+          <span class="divider">•</span>
+          <span class="subtitle-item">Impacto</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <!-- Formulario de empresa (crear / editar) -->
+      <app-company-list
+        *ngIf="currentView === 'companyForm'"
+        [editingCompany]="editingCompany"
+        (companyAdded)="onCompanyOperationCompleted()"
+        (operationCompleted)="onCompanyOperationCompleted()"
+        (companySelected)="onCompanySelected($event)">
+      </app-company-list>
+
+      <!-- Formulario de emisión -->
+      <app-emission-list
+        *ngIf="currentView === 'emissionForm'"
+        [company]="selectedCompany"
+        (emissionAdded)="onEmissionAdded()"
+        (goBackToList)="onGoBackToList()">
+      </app-emission-list>
+
+      <!-- Emisiones de empresa seleccionada -->
+      <div *ngIf="selectedCompany && currentView === 'companies'" class="table-container">
+        <h3>Emisiones de {{ selectedCompany.name }}</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Cantidad (kWh)</th>
+              <th>kgCO₂e</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emission of allEmissions">
+              <td>{{ emission.type }}</td>
+              <td>{{ emission.amount }}</td>
+              <td>{{ emission.co2e }}</td>
+              <td>{{ emission.date | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <button class="btn icon delete" (click)="deleteEmission(emission.id)" title="Eliminar emisión">🗑️</button>
+              </td>
+            </tr>
+            <tr *ngIf="allEmissions.length === 0">
+              <td colspan="5">Esta empresa aún no tiene emisiones registradas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla de empresas -->
+      <div *ngIf="currentView === 'companies'" class="card">
+        <h2>🏢 Lista de Empresas</h2>
+
+        <div class="filter-controls">
+          <input type="text" [(ngModel)]="companyFilter" placeholder="🔍 Filtrar por nombre o sector" class="filter-input">
+
+          <div class="sort-buttons">
+            <button (click)="sortCompanies('name')" [class.active]="companySortField === 'name'">
+              📛 Nombre {{ companySortField === 'name' ? (companySortDirection === 'asc' ? '↑' : '↓') : '' }}
+            </button>
+            <button (click)="sortCompanies('sector')" [class.active]="companySortField === 'sector'">
+              🏭 Sector {{ companySortField === 'sector' ? (companySortDirection === 'asc' ? '↑' : '↓') : '' }}
+            </button>
+            <button (click)="sortCompanies('emissions')" [class.active]="companySortField === 'emissions'">
+              ☁️ Emisiones {{ companySortField === 'emissions' ? (companySortDirection === 'asc' ? '↑' : '↓') : '' }}
+            </button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Sector</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let company of companies | filter:companyFilter:['name','sector']">
+              <td>{{ company.name }}</td>
+              <td>{{ company.sector }}</td>
+              <td>
+                <div class="action-buttons-group">
+                  <button class="btn icon view" (click)="viewCompanyEmissions(company)" title="Ver Emisiones">👁️</button>
+                  <button class="btn icon edit" (click)="editCompany(company)" title="Editar">✏️</button>
+                  <button class="btn icon delete" (click)="deleteCompany(company)" title="Eliminar">🗑️</button>
+                  <button class="btn icon add" (click)="addEmission(company)" title="Añadir Emisión">➕</button>
+               <button (click)="exportEmissionsToCSV(company)" title="Exportar en CSV"class="btn icon export">📁</button>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla de todas las emisiones -->
+      <div *ngIf="currentView === 'emissions'" class="card">
+        <h2>📊 Lista de Emisiones</h2>
+
+        <div class="sort-buttons">
+          <button (click)="sortEmissions('type')" [class.active]="emissionSortField === 'type'">🔧 Tipo {{ emissionSortField === 'type' ? (emissionSortDirection === 'asc' ? '↑' : '↓') : '' }}</button>
+          <button (click)="sortEmissions('amount')" [class.active]="emissionSortField === 'amount'">⚖️ Cantidad {{ emissionSortField === 'amount' ? (emissionSortDirection === 'asc' ? '↑' : '↓') : '' }}</button>
+          <button (click)="sortEmissions('co2e')" [class.active]="emissionSortField === 'co2e'">🌡️ CO2e {{ emissionSortField === 'co2e' ? (emissionSortDirection === 'asc' ? '↑' : '↓') : '' }}</button>
+          <button (click)="sortEmissions('date')" [class.active]="emissionSortField === 'date'">📅 Fecha {{ emissionSortField === 'date' ? (emissionSortDirection === 'asc' ? '↑' : '↓') : '' }}</button>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>CO2e (kg)</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emission of allEmissions">
+              <td>{{ emission.company.name }}</td>
+              <td>{{ emission.type }}</td>
+              <td>{{ emission.amount | number }}</td>
+              <td>{{ emission.co2e | number }}</td>
+              <td>{{ emission.date | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <button class="btn icon delete" (click)="deleteEmission(emission.id)" title="Eliminar emisión">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <footer class="app-footer">
+  <div class="footer-content">
+    <a href="https://github.com/FranJDM" target="_blank" title="GitHub" class="footer-icon">🔎​</a>
+    <a href="https://www.linkedin.com/in/fjdm" target="_blank" title="LinkedIn" class="footer-icon">🔗</a>
+  </div>
+</footer>
+  </main>
+  
+
+</div>

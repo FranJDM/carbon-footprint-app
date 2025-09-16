@@ -1,0 +1,24 @@
+<section class="card">
+<h2>Registrar emisión de: {{ (company || selectedCompany)?.name }}</h2>
+  <!-- Selector de empresa si no se recibe por @Input -->
+  <div *ngIf="!company" class="form-group">
+    <label for="companySelect">Selecciona una empresa:</label>
+    <select id="companySelect" [(ngModel)]="selectedCompanyId" (change)="onCompanySelected()" class="form-control">
+      <option [ngValue]="null">-- Selecciona --</option>
+      <option *ngFor="let c of companies" [ngValue]="c.id">{{ c.name }}</option>
+    </select>
+  </div>
+
+  <!-- Formulario de emisión -->
+  <form *ngIf="selectedCompany || company" [formGroup]="newEmissionForm" (ngSubmit)="addEmission()" class="form-container">
+    <div class="form-group">
+      <input type="text" formControlName="type" placeholder="Tipo (ej. Electricidad)">
+      <input type="number" formControlName="amount" placeholder="Cantidad (kWh)">
+      <input type="number" formControlName="co2e" placeholder="kgCO₂e">
+    </div>
+    <div class="form-actions">
+      <button type="submit" [disabled]="newEmissionForm.invalid">Agregar Emisión</button>
+      <button type="button" (click)="onCancel()">Cancelar y volver</button>
+    </div>
+  </form>
+</section>

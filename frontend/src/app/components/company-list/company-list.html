@@ -1,0 +1,27 @@
+<div class="form-container">
+  <h2>{{ editingCompany ? 'Editar Empresa' : 'Crear Nueva Empresa' }}</h2>
+  
+  <form [formGroup]="newCompanyForm" (ngSubmit)="submitCompany()">
+    <div class="form-group">
+      <input type="text" formControlName="name" placeholder="Nombre de la empresa">
+      <input type="text" formControlName="sector" placeholder="Sector">
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" [disabled]="newCompanyForm.invalid">
+        {{ editingCompany ? 'Actualizar' : 'Crear' }}
+      </button>
+      <button type="button" (click)="onCancel()">Cancelar</button>
+    </div>
+  </form>
+</div>
+
+<!-- ✅ Añadir este contenedor para la lista de empresas cuando no estamos editando -->
+<div *ngIf="!editingCompany" class="companies-list">
+  <div *ngFor="let company of companies" 
+       class="company-item" 
+       (click)="selectCompany(company)"
+       [class.selected]="selectedCompanyId() === company.id">
+    {{ company.name }} - {{ company.sector }}
+  </div>
+</div>

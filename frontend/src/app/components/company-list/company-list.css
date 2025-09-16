@@ -1,0 +1,142 @@
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box; /* importante para que padding no haga overflow */
+}
+
+.card {
+  background-color: #ffffff;
+    padding: 20px;
+
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px; /* opcional: limita el ancho del card */
+  margin: 0 auto;    /* centra el card */
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+
+h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.form-container {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap; /* asegura que los inputs no se salgan */
+}
+
+.form-group input {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;  /* hace que los inputs ocupen espacio proporcional */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-width: 100%; /* evita overflow */
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button:disabled {
+  background-color: #a0cffc;
+  cursor: not-allowed;
+}
+
+.company-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.company-list li {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.company-list li:hover {
+  background-color: #f9f9f9;
+}
+
+.company-list li.selected {
+  background-color: #e7f3ff;
+  font-weight: bold;
+  color: #0056b3;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  margin: 0 0.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn.icon.edit {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn.icon.delete {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+}
+
+.form-actions button[type="button"] {
+  background-color: #f44336;
+  color: white;
+}
+
+.form-actions button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+} 
